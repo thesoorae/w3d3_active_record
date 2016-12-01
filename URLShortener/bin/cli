@@ -1,0 +1,35 @@
+
+
+puts "What is your email?"
+email = gets.chomp
+
+
+user = User.find_by(email: email)
+
+puts "What do you want to do?"
+puts "0. Create shortened URL"
+puts "1. Visit shortened URL"
+
+input = gets.chomp
+
+if input == '0'
+  puts "Type in your long url"
+
+  long_url = gets.chomp
+
+  short_url = ShortenedUrl.create_for_user_and_long_url!(user, long_url)
+
+  puts "Short url is : #{short_url}"
+  puts "Goodbye!"
+else
+
+  puts "Type in shortened URL"
+  short = gets.chomp
+
+  long = ShortenedUrl.where("short_url = '#{short}'").pluck(:long_url)
+  url_object = ShortenedUrl.find_by(short_url: short)
+  Visit.record_visit!(user, url_object)
+  puts url_object
+  puts "Launching #{long}"
+  puts "Goodbye!"
+end
